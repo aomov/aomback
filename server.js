@@ -24,7 +24,7 @@ cloudinary.config({
 });
 
 // --- MONGODB CONFIGURATION ---
-const MONGODB_URI = "mongodb+srv://aomwebsite_db_user:Letmesee@cluster0.xrwtaf2.mongodb.net/?appName=Cluster0";
+const MONGODB_URI = "mongodb+srv://aomwebsite_db_user:Letmesee@cluster0.xrwtaf2.mongodb.net/aomevents?retryWrites=true&w=majority";
 const PORT = process.env.PORT || 5001;
 
 // --- MONGOOSE SCHEMA ---
@@ -57,13 +57,17 @@ const Event = mongoose.model('Event', eventSchema);
 // --- EXPRESS APP SETUP ---
 const app = express();
 
-// --- MIDDLEWARE ---
+// --- ENHANCED CORS MIDDLEWARE ---
 app.use(cors({
   origin: '*',
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  credentials: false,
+  optionsSuccessStatus: 200
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 app.use(express.json({ limit: '100mb' }));
 app.use(express.urlencoded({ extended: true, limit: '100mb' }));
@@ -407,12 +411,16 @@ const server = app.listen(PORT, () => {
   console.log(' ✅ Filter Events: GET /events?type=upcoming or GET /events?type=past');
   console.log('\n✏️  All resources support full EDIT functionality via PUT');
   
-  mongoose.connect(MONGODB_URI)
+  mongoose.connect(MONGODB_URI, {
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+  })
   .then(() => {
     console.log('✅ Connected to MongoDB successfully!');
   })
   .catch(err => {
     console.error('❌ Initial MongoDB connection failed:', err.message);
+    console.error('Full error:', err);
   });
 });
 
