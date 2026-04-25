@@ -24,7 +24,7 @@ cloudinary.config({
 });
 
 // --- MONGODB CONFIGURATION ---
-const MONGODB_URI = "mongodb+srv://medikidssite_db_user:medikidssite_db_password@cluster0.mcld8jo.mongodb.net/?appName=Cluster0";
+const MONGODB_URI = "mongodb+srv://makeurselfcomfortable_db_user:makeurselfcomfortable_db_password@cluster0.4bg8wo3.mongodb.net/?appName=Cluster0";
 const PORT = process.env.PORT || 5001;
 
 // --- MONGOOSE SCHEMAS ---
@@ -166,7 +166,7 @@ const uploadVideo = multer({
 
 app.get("/", (req, res) => {
   res.json({
-    message: "Medikids Backend API ✅",
+    message: "AOM Backend API✅",
     timestamp: new Date().toISOString(),
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
